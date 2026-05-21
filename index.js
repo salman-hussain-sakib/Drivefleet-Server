@@ -49,6 +49,7 @@ app.get('/', (req, res) => {
     message: 'Welcome to the DriveFleet Car Rental Platform API!',
     status: 'Healthy',
     db_status: global.useMemoryDB ? 'Memory Fallback' : 'Connected to Atlas',
+    db_error: global.dbError || 'None',
   });
 });
 

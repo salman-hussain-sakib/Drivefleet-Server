@@ -11,11 +11,13 @@ const connectDB = async () => {
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     global.useMemoryDB = false; // Disable memory DB since real DB is working!
+    global.dbError = null;
   } catch (error) {
     console.error(`MongoDB Connection Error: ${error.message}`);
     console.log('Ensure MongoDB is running or update MONGO_URI in .env file.');
     console.log('Running in local memory fallback mode for routes to prevent server crash.');
     global.useMemoryDB = true; // Stay in memory fallback mode
+    global.dbError = error.message;
   }
 };
 
