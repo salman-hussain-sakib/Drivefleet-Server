@@ -92,7 +92,7 @@ global.memoryCars = [...initialCars];
 global.memoryBookings = [];
 
 // Flag indicating if memory DB fallback is in active use
-global.useMemoryDB = true; // Enabled by default unless Mongo successfully connects
+global.useMemoryDB = false; // Let Mongoose buffer commands until connected or explicitly failed
 
 console.log("Memory DB Fallback Initialized with 6 Premium Cars.");
 
