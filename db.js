@@ -32,6 +32,16 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     global.useMemoryDB = false;
     global.dbError = null;
+
+    // Seed database if empty
+    const Car = require('./models/Car');
+    const { initialCars } = require('./memoryDb');
+    const carCount = await Car.countDocuments();
+    if (carCount === 0) {
+      await Car.insertMany(initialCars);
+      console.log('Database successfully seeded with 6 initial cars.');
+    }
+
     return conn;
   } catch (error) {
     console.error(`MongoDB Connection Error: ${error.message}`);
