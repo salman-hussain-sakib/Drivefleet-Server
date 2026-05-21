@@ -11,8 +11,15 @@ const bookingRoutes = require('./routes/bookings');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB middleware to handle serverless cold starts
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error("Database connection middleware error:", err.message);
+  }
+  next();
+});
 
 // Trust Vercel's reverse proxy for secure cookies
 app.set('trust proxy', 1);
