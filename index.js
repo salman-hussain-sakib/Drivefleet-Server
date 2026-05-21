@@ -53,6 +53,45 @@ app.get('/', (req, res) => {
   });
 });
 
+app.get('/api/diagnose-db', async (req, res) => {
+  try {
+    const mongoose = require('mongoose');
+    const state = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting',
+    };
+
+    let collections = [];
+    let counts = {};
+    if (state === 1) {
+      const cols = await mongoose.connection.db.listCollections().toArray();
+      collections = cols.map(c => c.name);
+      for (const name of collections) {
+        counts[name] = await mongoose.connection.db.collection(name).countDocuments();
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      mongoose_state: states[state],
+      useMemoryDB: global.useMemoryDB,
+      dbError: global.dbError,
+      mongoURI: process.env.MONGO_URI ? `${process.env.MONGO_URI.substring(0, 25)}...` : 'Not Set',
+      collections,
+      counts
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+      stack: err.stack
+    });
+  }
+});
+
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
